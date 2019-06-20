@@ -1,4 +1,4 @@
-# Thanks ot niranjants  for worting this in pdf
+# Thanks ot niranjants  for building  this in pdf
 # Install packages car to get vif function
 install.packages('car')
 library('car')
