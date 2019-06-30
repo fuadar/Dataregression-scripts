@@ -1,0 +1,112 @@
+
+  John Covington
+  Eric Ice-Gipson
+  Michele Piotrowski
+  Michel Tavares
+  Andrew Vasquez
+ 
+ 
+https://confluence.ncr.com/pages/viewpage.action?spaceKey=APIP&title=Apigee+Naming+Conventions
+
+
+https://confluence.ncr.com/display/IFS/Apigee+SaaS
+
+https://www.youtube.com/watch?v=XSoau_q0kz8
+https://www.edureka.co/blog/knn-algorithm-in-r/#KNN%20Algorithm%20Use%20Case
+
+ 
+readmit <- read.csv("C:/Anil/Transcripts/UIUC/CourseMaterial/Predictive/Assignment-2/Tahoe_KNN.csv")
+
+ head(readmit)
+
+ str(readmit)
+
+//no need for a subset of attributes
+ head(readmit)
+
+normalize <-function(x) { return ((x-min(x))/(max(x) - min(x))) }
+
+readmit.subset.n <- as.data.frame(lapply(readmit[,2:8],normalize))
+
+head(readmit.subset.n)
+
+set.seed(42)
+
+dat.d <- sample(1:nrow(readmit.subset.n),size=nrow(readmit.subset.n)*0.7,replace=FALSE) #random sample of 70%
+
+train.readmit <- readmit[dat.d,] #70% training data
+test.readmit <- readmit[-dat.d,] #remaining 30% test data
+
+#Creating separte dataframe for readmit30 feature which is our target
+train.readmit_target <- readmit[dat.d,1]
+test.readmit_target <- readmit[-dat.d,1]
+
+library(class) #to call calss package
+
+NROW(train.readmit_target) #number of observations
+
+knn.55 <- knn(train=train.readmit, test=test.readmit, cl=train.readmit_target,k=55)
+knn.56 <- knn(train=train.readmit, test=test.readmit, cl=train.readmit_target,k=56)
+
+ACC.55 <- 100*sum(test.readmit_target==knn.55)/NROW(test.readmit_target)
+ACC.56 <- 100*sum(test.readmit_target==knn.56)/NROW(test.readmit_target)
+
+ACC.55 #Accuracy is 80.98%
+ACC.56 #Accuracy is 80.91%
+
+table(knn.55, test.readmit_target) # to check prediction against actual value in tabular form
+
+knn.55
+
+####### OUTPUT
+#knn.55   0   1
+#     0 992 205
+#     1  45  73
+
+##################
+
+table(knn.56, test.readmit_target) # to check prediction against actual value in tabular form
+knn.56
+
+####### OUTPUT
+#knn.56   0   1
+#     0 992 202
+#     1  45  76
+
+##################
+
+install.packages("caret")
+library(caret)
+confusionMatrix(table(knn.55, test.readmit_target))
+
+########## OUTPUT 
+Confusion Matrix and Statistics
+
+      test.readmit_target
+knn.55   0   1
+     0 992 205
+     1  45  73
+                                          
+               Accuracy : 0.8099          
+                 95% CI : (0.7876, 0.8308)
+    No Information Rate : 0.7886          
+    P-Value [Acc > NIR] : 0.03045         
+                                          
+                  Kappa : 0.2777          
+                                          
+ Mcnemar's Test P-Value : < 2e-16         
+                                          
+            Sensitivity : 0.9566          
+            Specificity : 0.2626          
+         Pos Pred Value : 0.8287          
+         Neg Pred Value : 0.6186          
+             Prevalence : 0.7886          
+         Detection Rate : 0.7544          
+   Detection Prevalence : 0.9103          
+      Balanced Accuracy : 0.6096          
+                                          
+       'Positive' Class : 0           
+	   
+###################
+
+

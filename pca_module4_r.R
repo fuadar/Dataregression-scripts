@@ -1,47 +1,50 @@
 ##############################------------PCA-----------##########################################
 
 getwd() # Check the working directory. You should keep your data file in this folder
-#setwd("C:\Users\Yogesh\Downloads\Universities.csv") # this allows you to set a folder of your choice 
+setwd("/Users/farshad/Documents/github/Dataregression-scripts") # this allows you to set a folder of your choice 
 # as the working directory
 
 # Universities data
 university <- read.csv("Universities.csv") # read data from the file in the working directory
-pca_univ <- prcomp(university[,c(3:7)], center = TRUE, scale. = TRUE) # selecting columns 3-7 for PCA
+pca_univ <- prcomp(university[,c(2:7)], center = TRUE, scale. = TRUE) # selecting columns 2-7 for PCA
 PCs <- pca_univ$x # all components are saved in the files PCs
 university_pca <- cbind(university,PCs) # merge all data 
-summary(pca_univ)# output of PCA model 
-
+#The summary of my script looks like below
+#Importance of components:
+#PC1    PC2     PC3    PC4     PC5     PC6
+#Standard deviation     2.1476 0.8870 0.53531 0.4047 0.35257 0.16264
+#Proportion of Variance 0.7687 0.1311 0.04776 0.0273 0.02072 0.00441
+#Cumulative Proportion  0.7687 0.8998 0.94758 0.9749 0.99559 1.00000
 # Regression Model to predict Graduation Rate on all 5 variables (without PCA)
-model <- lm(GradRate~ SAT+Top10+Accept+SFRatio+Expenses, data = university_pca)
+model <- lm(Grad~ SAT+Top10+Accept+SFRatio+Expenses, data = university_pca)
 summary(model)
-# Multiple R-squared:  0.7104 - Around 71 % variance in Grad rate is explained by this model. 
-# Adjusted R-squared:  0.6342 - The diff between R and adj R squared is 8% as there are 66 parameters being estimated with total
-# observations being quite low i.e., 25
+#My Multiple R Squared = 0.7104 
+# My Adjusted R Square = 0.634
 
-
-# Regression Model to predict Graduation Rate based on 1st component only
-model_pca1 <-lm(GradRate~ PC1, data = university_pca)
-summary(model_pca1)
-# Multiple R-squared:  0.5414 # using just 1 PC the % variance epxlained comes down from 71 % to 54%
-# Adjusted R-squared:  0.5215 # The difference between R and adjusted R Squared is lower (2%) because there are only
-# 2 parameters ( 1 coefficient for pC and 1 intercept) to be estimated. 
-
-# Regression Model to predict Graduation Rate based on 1st and 2nd components
-model_pca2 <-lm(GradRate~ PC1+PC2, data = university_pca)
-summary(model_pca2)
-# Multiple R-squared:  0.6705 # Two PCs explain close to 67% variance 
-# Adjusted R-squared:  0.6405 # This model has more Adj R Squared than the model with all the variables
-# because it estimates only 3 paramaters (2 coeffciients for PC and 1 inetercept) however the input variables (3 PCs) 
-# carry almost 92.3% varianceof the original 5 variables. 
-
-
-# We see that adjusted R Sq is higher using just 2 components (PC1 and PC2) than using all five variable. 
-######################################XXXXXXXXXXXXXXXXXXX#########################################
 
 # Regression Model to predict Graduation Rate based on 1st, 2nd and 3rd components
-model_pca3 <-lm(GradRate~ PC1+PC2+PC3, data = university_pca)
+model_pca3 <-lm(Grad~ PC1+PC2+PC3, data = university_pca)
 summary(model_pca3)
-# Multiple R-squared:  0.70 # Three PCs explain close to 70% variance 
-# Adjusted R-squared:  0.66 # This model has even more Adj R Squared than the model with all the variables
+# Multiple R-squared:  0.9543 # Three PCs explain close to 95% variance 
+# Adjusted R-squared:  0.9477 # This model has even more Adj R Squared than the model with all the variables
 # because it estimates only 4 paramaters (3 coeffciients for PC and 1 inetercept),  however the input 
-# variables (3 PCs) carry almost 92.3% variance of the original 5 variables. 
+# variables (3 PCs) carry almost 95% variance of the original 5 variables. 
+#Call:
+#  lm(formula = Grad ~ PC1 + PC2 + PC3, data = university_pca)
+
+#Residuals:
+#  Min      1Q  Median      3Q     Max 
+#-4.7714 -0.9322 -0.1195  1.1915  3.4018 
+
+#Coefficients:
+#  Estimate Std. Error t value Pr(>|t|)    
+#(Intercept)  86.7200     0.4141 209.416  < 2e-16 ***
+#  PC1          -3.4366     0.1968 -17.462 5.55e-14 ***
+#  PC2          -4.6698     0.4765  -9.801 2.75e-09 ***
+#  PC3           4.8230     0.7895   6.109 4.62e-06 ***
+  ---
+#  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+#Residual standard error: 2.071 on 21 degrees of freedom
+#Multiple R-squared:  0.9543,	Adjusted R-squared:  0.9477 
+#F-statistic: 146.1 on 3 and 21 DF,  p-value: 3.163e-14
